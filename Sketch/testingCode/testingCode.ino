@@ -1,12 +1,6 @@
 
-// #include <Adafruit_MPU6050.h>
-// #include <Adafruit_Sensor.h>
-// #include <Wire.h>
-// #include <WiFi.h>
 // #include "ThingSpeak.h"
 
-// const char* WIFI_NAME = "Wokwi-GUEST";
-// const char* WIFI_PASSWORD = "";
 // const int myChannelNumber =2320772 ;
 // const char* myApiKey = "5MV8Z810A5B5F0MH";
 // const char* server = "api.thingspeak.com";
@@ -115,48 +109,6 @@
 
 
 // void loop() {
-//   /* Get new sensor events with the readings */
-//   sensors_event_t a, g, temp;
-//   mpu.getEvent(&a, &g, &temp);
-
-//   /* Print out the values */
-//   Serial.print("+---------------+\n");
-//   Serial.print("|Acceleration   |\n");
-//   Serial.print("+---------------+\n");
-//   Serial.print("X: ");
-//   Serial.print(a.acceleration.x);
-//   Serial.print(" m/s^2");
-//   Serial.print("\nY: ");
-//   Serial.print(a.acceleration.y);
-//   Serial.print(" m/s^2");
-//   Serial.print("\nZ: ");
-//   Serial.print(a.acceleration.z);
-//   Serial.print(" m/s^2");
-//   Serial.print("\n+---------------+\n");
-
-//   Serial.print("\n+---------------+\n");
-//   Serial.print("|Rotation       |\n");
-//   Serial.print("+---------------+\n");
-//   Serial.print("X: ");
-//   Serial.print(g.gyro.x);
-//   Serial.print(" rad/s");
-//   Serial.print("\nY: ");
-//   Serial.print(g.gyro.y);
-//   Serial.print(" rad/s");
-//   Serial.print("\nZ: ");
-//   Serial.print(g.gyro.z);
-//   Serial.print(" rad/s");
-//   Serial.print("\n+---------------+\n");
-
-//   Serial.print("\n+---------------+\n");
-//   Serial.print("|Temperature    |\n");
-//   Serial.print("+---------------+\n");
-//   Serial.print(temp.temperature);
-//   Serial.println(" °C ");
-//   Serial.print("+---------------+\n");
-
-//   Serial.println("");
-//   delay(500);
 
 //   //Upload to thingspeak
 
@@ -173,35 +125,19 @@
 //   delay(10000);
 // }
 
-
-// #define BLYNK_TEMPLATE_ID "TMPL35bACVfZx"
-// #define BLYNK_TEMPLATE_NAME "Terrrestial Mapping"
-// #define BLYNK_AUTH_TOKEN "CLNypzeJXfCtYaBLzRG6o3LudIQElZpU"
-
-// #include <BlynkSimpleEsp32.h>
-
-// // You can also specify server:
-
-// char ssid[] = "Wokwi-GUEST";
-// char pass[] = "";
-
-
-// //Blynk.begin(BLYNK_AUTH_TOKEN, ssid, pass, IPAddress(192,168,1,100), 8080);
-
-// char auth[] = "CLNypzeJXfCtYaBLzRG6o3LudIQElZpU";
-
-// void setup() {
-//   Serial.begin(115200);
-//   Blynk.begin(BLYNK_AUTH_TOKEN, ssid, pass, "blynk.cloud", 80);
-// }
-
-// void loop() {
-//   Blynk.run();
-// }
+//++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+//++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
 
 #define BLYNK_TEMPLATE_ID "TMPL35bACVfZx"
 #define BLYNK_TEMPLATE_NAME "Terrrestial Mapping"
+#define MPU6050_SDA 2
+#define MPU6050_SCL 4
+#define GY271_SDA 5
+#define GY271_SCL 18
+#define GPS_RX 19
+#define GPS_TX 21
+
 
 #include <WiFi.h>
 #include <Adafruit_MPU6050.h>
@@ -210,8 +146,8 @@
 #include <BlynkSimpleEsp32.h>
 
 //Wifi Section for our project
-char ssid[] = "Wokwi-GUEST";
-char pass[] = "";
+char ssid[] = "arjunkumar";
+char pass[] = "11916159";
 
 //Making obect of MPU library
 Adafruit_MPU6050 mpu;

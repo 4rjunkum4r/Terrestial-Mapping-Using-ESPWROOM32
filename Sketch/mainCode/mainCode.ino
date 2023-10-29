@@ -1,41 +1,31 @@
+#define BLYNK_TEMPLATE_ID "TMPL35bACVfZx"
+#define BLYNK_TEMPLATE_NAME "Terrrestial Mapping"
+
 #include <WiFi.h>
 #include <Adafruit_MPU6050.h>
 #include <Adafruit_Sensor.h>
 #include <Wire.h>
+#include <BlynkSimpleEsp32.h>
 
 //Wifi Section for our project
-const char* ssid = "espProject";
-const char* password = "11916159";
+char ssid[] = "arjunkumar";
+char pass[] = "11916159";
 
 //Making obect of MPU library
 Adafruit_MPU6050 mpu;
 
 void setup() {
+
   Serial.begin(115200);
-  //-------------------------------------------------------------------------------------------------------------------
-  WiFi.mode(WIFI_STA);
+  Blynk.begin("CLNypzeJXfCtYaBLzRG6o3LudIQElZpU", ssid, pass, "blynk.cloud", 80);
 
-  WiFi.begin(ssid, password);
-  Serial.println("Connecting to Wi-Fi...");
-  while (WiFi.status() != WL_CONNECTED) {
-    delay(1000);
-    Serial.print(".");
-  }
-  Serial.println("\nConnected to the Wi-Fi network");
-  Serial.println("SSID: ");
-  Serial.print(ssid);
-  Serial.println("IP address: ");
-  Serial.print(WiFi.localIP());
-  //----------------------------------------------------------------------------------------------------------------
-
+  //MPU6050 Section
   Serial.println("\nMPU6050 test!");
   while (!mpu.begin()) {
     delay(1000);
     Serial.println("Failed to find MPU6050 chip");
   }
-  
   Serial.println("MPU6050 Found!");
-
   mpu.setAccelerometerRange(MPU6050_RANGE_8_G);
   Serial.print("Accelerometer range set to: ");
   switch (mpu.getAccelerometerRange()) {
@@ -96,11 +86,15 @@ void setup() {
   }
 
   Serial.println("");
+  //Blynk Section
+
+
   delay(100);
 
 }
 
 void loop() {
+
 
   /* Get new sensor events with the readings */
   sensors_event_t a, g, temp;
@@ -144,5 +138,21 @@ void loop() {
 
   Serial.println("");
   delay(500);
+  float xRotationDegrees = (g.gyro.x)*57.29;
+  float yRotationDegrees = (g.gyro.y)*57.29;
+  float zRotationDegrees = (g.gyro.z)*57.29;
+  //  // Send the sensor data to Blynk
+  Blynk.virtualWrite(0, a.acceleration.x);
+  Blynk.virtualWrite(1, a.acceleration.y);
+  Blynk.virtualWrite(2, a.acceleration.z);
+
+  Blynk.virtualWrite(3, xRotationDegrees);
+  Blynk.virtualWrite(4, yRotationDegrees);
+  Blynk.virtualWrite(5, zRotationDegrees);
+
+  Blynk.virtualWrite(6, temp.temperature);
+  //
+  //  // Process all Blynk requests
+  Blynk.run();
 
 }
