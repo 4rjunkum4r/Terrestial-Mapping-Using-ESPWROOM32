@@ -112,7 +112,7 @@ void loop() {
           if((azimut > 67.5)  && (azimut < 112.5 ))  Serial.print("East      ");
           if((azimut > 112.5) && (azimut < 157.5 ))  Serial.print("South-East");
           if((azimut > 157.5) && (azimut < 202.5 ))  Serial.print("South     ");
-          if((azimut > 202.5) && (azimut < 247.5 ))  Serial.print("SOuth-West");
+          if((azimut > 202.5) && (azimut < 247.5 ))  Serial.print("South-West");
           if((azimut > 247.5) && (azimut < 292.5 ))  Serial.print("West      ");
           if((azimut > 292.5) && (azimut < 337.5 ))  Serial.print("North-West");
  

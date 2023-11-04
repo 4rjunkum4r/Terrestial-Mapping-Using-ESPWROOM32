@@ -1,40 +1,51 @@
-#include <SoftwareSerial.h>
 #include <TinyGPS++.h>
+#include <SoftwareSerial.h>
 
+// Define the serial connections for GPS and ESP32
+#define GPS_RX_PIN 16
+#define GPS_TX_PIN 17
+
+// Create a TinyGPS++ object
 TinyGPSPlus gps;
-SoftwareSerial ss(0,1);
+
+// Create a SoftwareSerial object for GPS communication
+SoftwareSerial gpsSerial(GPS_RX_PIN, GPS_TX_PIN);
 
 void setup() {
-  Serial.begin(115200);
-  Serial.println("********** Starting Program To Located GPS Coordinate **********");
+  Serial.begin(115200); // Start the serial communication
+  gpsSerial.begin(9600); // Start the GPS serial communication
 
-  ss.begin(9600);
+  Serial.println("GPS Module Test");
 
+  // Some modules require a warm-up period and a few initial readings
+  // Read data from GPS for a few seconds to initialize
+  unsigned long start = millis();
+  while (millis() - start < 5000) {
+    while (gpsSerial.available() > 0) {
+      if (gps.encode(gpsSerial.read())) {
+        displayInfo();
+      }
+    }
+  }
 }
 
 void loop() {
-  while (ss.available() > 0)
-    if (gps.encode(ss.read()))
+  // Keep reading the GPS data in the main loop
+  while (gpsSerial.available() > 0) {
+    if (gps.encode(gpsSerial.read())) {
       displayInfo();
-
-  if (millis() > 5000 && gps.charsProcessed() < 10)
-  {
-    Serial.println(F("No GPS detected: check wiring."));
-    while (true);
+    }
   }
 }
 
 void displayInfo() {
-
   if (gps.location.isValid()) {
-    Serial.println("Latitude:- ");
+    Serial.print("Latitude: ");
     Serial.println(gps.location.lat());
-    delay(1000);
-    Serial.println("Longitude:- ");
+    Serial.print("Longitude: ");
     Serial.println(gps.location.lng());
-    delay(1000);
   } else {
-    Serial.println(F("INVALID"));
+    Serial.println("GPS signal not valid");
   }
-
-} 
+  Serial.println();
+}
