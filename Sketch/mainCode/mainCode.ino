@@ -37,15 +37,11 @@ void setup() {
   Serial.begin(115200);
   WiFi.begin(ssid, pass);
   gpsSerial.begin(9600);
-
+  ThingSpeak.begin(client);
+  Blynk.begin("CLNypzeJXfCtYaBLzRG6o3LudIQElZpU", ssid, pass, "blynk.cloud", 80);
   mpu.setAccelerometerRange(MPU6050_RANGE_8_G);
   mpu.setGyroRange(MPU6050_RANGE_500_DEG);
   mpu.setFilterBandwidth(MPU6050_BAND_5_HZ);
-
-  ThingSpeak.begin(client);
-
-  Blynk.begin("CLNypzeJXfCtYaBLzRG6o3LudIQElZpU", ssid, pass, "blynk.cloud", 80);
-
 }
 
 void loop() {
@@ -53,7 +49,7 @@ void loop() {
   sensors_event_t a, g, temp;
   mpu.getEvent(&a, &g, &temp);
 
-  while (gpsSerial.available() > 0) {
+  while (gpsSerial.available() > 0){
     if (gps.encode(gpsSerial.read()))
     {
       if (gps.location.isValid())
@@ -66,10 +62,13 @@ void loop() {
         Serial.println(lat_str);
         Serial.print("Longitude = ");
         Serial.println(lng_str);
-      } delay(1000);
+        ThingSpeak.setField(7, lat_str);
+        ThingSpeak.setField(8, lng_str);
+        ThingSpeak.writeFields(myChannelNumber, myApiKey); 
+      }
+     delay(1000);
     }
   }
-
 
   float xRotationDegrees = (g.gyro.x) * 57.29;
   float yRotationDegrees = (g.gyro.y) * 57.29;
@@ -82,8 +81,8 @@ void loop() {
   ThingSpeak.setField(4, xRotationDegrees);
   ThingSpeak.setField(5, yRotationDegrees);
   ThingSpeak.setField(6, zRotationDegrees);
-  ThingSpeak.setField(7, lat_str);
-  ThingSpeak.setField(8, lng_str);
+
+  ThingSpeak.writeFields(myChannelNumber, myApiKey);
 
   Blynk.virtualWrite(0, a.acceleration.x);
   Blynk.virtualWrite(1, a.acceleration.y);
@@ -92,10 +91,9 @@ void loop() {
   Blynk.virtualWrite(4, yRotationDegrees);
   Blynk.virtualWrite(5, zRotationDegrees);
   Blynk.virtualWrite(6, temp.temperature);
-  Blynk.virtualWrite(7, gps.location.lat());
-  Blynk.virtualWrite(8, gps.location.lng());
+  Blynk.virtualWrite(7, lat_str);
+  Blynk.virtualWrite(8, lat_str);
 
-  ThingSpeak.writeFields(myChannelNumber, myApiKey);
   Blynk.run();
 
 }

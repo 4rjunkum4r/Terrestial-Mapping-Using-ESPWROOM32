@@ -2,6 +2,7 @@
 #include <SoftwareSerial.h>
 #include <ThingSpeak.h>
 #include <WiFi.h>
+
 static const int RXPin = 16, TXPin = 17;
 static const uint32_t GPSBaud = 9600;
 float latitude , longitude;
@@ -23,21 +24,6 @@ void setup()
 {
   Serial.begin(115200);
   ss.begin(GPSBaud);
-  Serial.print("Connecting to ");
-  Serial.println(ssid);
-  WiFi.begin(ssid, password);
-  while (WiFi.status() != WL_CONNECTED) {
-    delay(500);
-    Serial.print(".");
-  }
-   Serial.println("");
-  Serial.println("WiFi connected");  
-  Serial.println("IP address: ");
-  Serial.println(WiFi.localIP());
-  Serial.print("Netmask: ");
-  Serial.println(WiFi.subnetMask());
-  Serial.print("Gateway: ");
-  Serial.println(WiFi.gatewayIP());
   ThingSpeak.begin(client);
 }
 void loop()
