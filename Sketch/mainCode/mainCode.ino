@@ -19,29 +19,24 @@ const int myChannelNumber = 2332155 ;
 const char* myApiKey = "PORNZDX2Q0SNDGG9";
 const char* server = "api.thingspeak.com";
 
+static const int RXPin = 16, TXPin = 17;
+static const uint32_t GPSBaud = 9600;
+float latitude , longitude;
+String  lat_str , lng_str;
 
 Adafruit_MPU6050 mpu;
 
 TinyGPSPlus gps;
 
-SoftwareSerial gpsSerial(GPS_RX_PIN, GPS_TX_PIN);
+SoftwareSerial gpsSerial(RXPin, TXPin);
 
 WiFiClient client;
 
 void setup() {
 
   Serial.begin(115200);
-
+  WiFi.begin(ssid, pass);
   gpsSerial.begin(9600);
-
-  unsigned long start = millis();
-  while (millis() - start < 5000) {
-    while (gpsSerial.available() > 0) {
-      if (gps.encode(gpsSerial.read())) {
-        displayInfo();
-      }
-    }
-  }
 
   mpu.setAccelerometerRange(MPU6050_RANGE_8_G);
   mpu.setGyroRange(MPU6050_RANGE_500_DEG);
@@ -58,16 +53,28 @@ void loop() {
   sensors_event_t a, g, temp;
   mpu.getEvent(&a, &g, &temp);
 
+  while (gpsSerial.available() > 0) {
+    if (gps.encode(gpsSerial.read()))
+    {
+      if (gps.location.isValid())
+      {
+        latitude = gps.location.lat();
+        lat_str = String(latitude , 6);
+        longitude = gps.location.lng();
+        lng_str = String(longitude , 6);
+        Serial.print("Latitude = ");
+        Serial.println(lat_str);
+        Serial.print("Longitude = ");
+        Serial.println(lng_str);
+      } delay(1000);
+    }
+  }
+
 
   float xRotationDegrees = (g.gyro.x) * 57.29;
   float yRotationDegrees = (g.gyro.y) * 57.29;
   float zRotationDegrees = (g.gyro.z) * 57.29;
 
-  while (gpsSerial.available() > 0) {
-    if (gps.encode(gpsSerial.read())) {
-      displayInfo();
-    }
-  }
 
   ThingSpeak.setField(1, a.acceleration.x);
   ThingSpeak.setField(2, a.acceleration.x);
@@ -75,7 +82,8 @@ void loop() {
   ThingSpeak.setField(4, xRotationDegrees);
   ThingSpeak.setField(5, yRotationDegrees);
   ThingSpeak.setField(6, zRotationDegrees);
-
+  ThingSpeak.setField(7, lat_str);
+  ThingSpeak.setField(8, lng_str);
 
   Blynk.virtualWrite(0, a.acceleration.x);
   Blynk.virtualWrite(1, a.acceleration.y);
@@ -84,17 +92,10 @@ void loop() {
   Blynk.virtualWrite(4, yRotationDegrees);
   Blynk.virtualWrite(5, zRotationDegrees);
   Blynk.virtualWrite(6, temp.temperature);
+  Blynk.virtualWrite(7, gps.location.lat());
+  Blynk.virtualWrite(8, gps.location.lng());
+
+  ThingSpeak.writeFields(myChannelNumber, myApiKey);
   Blynk.run();
 
-}
-
-void displayInfo() {
-  if (gps.location.isValid()) {
-    Blynk.virtualWrite(7, gps.location.lat());
-    Blynk.virtualWrite(8, gps.location.lng());
-    Blynk.run();
-  } else {
-    Serial.println("GPS signal not valid");
-  }
-  Serial.println();
 }
