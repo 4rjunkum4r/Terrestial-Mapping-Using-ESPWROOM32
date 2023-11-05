@@ -24,9 +24,13 @@ const char* blynkAuthToken = "CLNypzeJXfCtYaBLzRG6o3LudIQElZpU";
 // Initialize MPU6050
 Adafruit_MPU6050 mpu;
 
+// Define your GPS module's serial connection
+#define GPS_SERIAL Serial2
+
 // Initialize TinyGPS++ object
 TinyGPSPlus gps;
 WiFiClient client;
+
 void setup() {
   // Initialize Serial Monitor
   Serial.begin(115200);
@@ -50,19 +54,23 @@ void setup() {
     Serial.println("MPU6050 initialization failed!");
     while (1);
   }
+
+  // Initialize GPS module
+  GPS_SERIAL.begin(9600);  // Adjust the baud rate to match your GPS module
 }
 
 void loop() {
   // Read GPS data
-  while (Serial2.available() > 0) {
-    if (gps.encode(Serial2.read())) {
-      // Process GPS data
-      latitude = gps.location.lat();
-      lat_str = String(latitude , 6);
-      longitude = gps.location.lng();
-      lng_str = String(longitude , 6);
-      sendToThingSpeakGPS(lat_str, lng_str);
-      sendToBlynkGPS(lat_str, lng_str);
+  while (GPS_SERIAL.available() > 0) {
+    if (gps.encode(GPS_SERIAL.read())) {
+      if (gps.location.isValid()) {
+        latitude = gps.location.lat();
+        lat_str = String(latitude, 6);
+        longitude = gps.location.lng();
+        lng_str = String(longitude, 6);
+        sendToThingSpeakGPS(lat_str, lng_str);
+        sendToBlynkGPS(lat_str, lng_str);
+      }
     }
   }
 
@@ -100,9 +108,9 @@ void sendToThingSpeak(float xRotationDegrees, float yRotationDegrees, float zRot
   }
 }
 
-void sendToThingSpeakGPS(String lat_str, String lng_str) {
-  ThingSpeak.setField(7, lat_str);
-  ThingSpeak.setField(8, lng_str);
+void sendToThingSpeakGPS(String latitude, String longitude) {
+  ThingSpeak.setField(7, latitude);
+  ThingSpeak.setField(8, longitude);
   int thingSpeakSuccess = ThingSpeak.writeFields(thingSpeakChannel, thingSpeakApiKey);
   if (thingSpeakSuccess) {
     Serial.println("GPS data sent to ThingSpeak");
@@ -120,7 +128,8 @@ void sendToBlynk(float xRotationDegrees, float yRotationDegrees, float zRotation
   Blynk.virtualWrite(5, zRotationDegrees);
   Blynk.virtualWrite(6, temperature);
 }
-void sendToBlynkGPS(String lat_str, String lng_str) {
-  Blynk.virtualWrite(7, lat_str);
-  Blynk.virtualWrite(8, lng_str);
+
+void sendToBlynkGPS(String latitude, String longitude) {
+  Blynk.virtualWrite(7, latitude);
+  Blynk.virtualWrite(8, longitude);
 }
