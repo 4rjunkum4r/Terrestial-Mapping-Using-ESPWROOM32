@@ -127,9 +127,11 @@ void sendToBlynk(float xRotationDegrees, float yRotationDegrees, float zRotation
   Blynk.virtualWrite(4, yRotationDegrees);
   Blynk.virtualWrite(5, zRotationDegrees);
   Blynk.virtualWrite(6, temperature);
+  Serial.println("Reading has been sent to Blynk");
 }
 
 void sendToBlynkGPS(String latitude, String longitude) {
   Blynk.virtualWrite(7, latitude);
   Blynk.virtualWrite(8, longitude);
+  Serial.println("GPS data sent to Blynk");
 }

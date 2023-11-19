@@ -1,12 +1,7 @@
-function SurfaceForThinkspeak()
+function SurfaceForThinkspeak2()
 % ThingSpeak Channel ID and Write API Key
 channelID = 2332155;
 readAPIKey = 'FIZT5F9N257PMZBG';
-writeAPIKey = 'PORNZDX2Q0SNDGG9'; 
-
-% Clear existing data from ThingSpeak channel
-emptyData = NaN(1, 3);
-thingSpeakWrite(channelID, emptyData, 'Fields', [4, 5, 6], 'WriteKey', writeAPIKey);
 
 % Create a figure for the 3D surface plot
 figure;
@@ -33,9 +28,9 @@ el = 30;
 % Start an animation loop
 while ishandle(h)  % Check if the figure is still open
     % Fetch the latest data point from ThingSpeak
-    data = thingSpeakRead(channelID, 'Fields', [4, 5, 6], 'NumPoints', 1, 'ReadKey', readAPIKey);
+    data = thingSpeakRead(channelID, 'Fields', [4,5,6], 'NumPoints', 1, 'ReadKey', readAPIKey);
 
-    % Extract data into separate variables
+
     xRotation = data(1, 1);
     yRotation = data(1, 2);
     zRotation = data(1, 3);
