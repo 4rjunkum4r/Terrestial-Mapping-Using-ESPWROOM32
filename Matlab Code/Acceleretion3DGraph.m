@@ -3,7 +3,7 @@ channelID = 2332155;
 readAPIKey = 'FIZT5F9N257PMZBG';
 
 % Number of data points to fetch
-numPoints = 20;
+numPoints = 200;
 
 % Fetch data from ThingSpeak
 data = thingSpeakRead(channelID, 'Fields', [1, 2, 3], 'NumPoints', numPoints, 'ReadKey', readAPIKey);

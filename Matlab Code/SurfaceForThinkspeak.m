@@ -2,11 +2,11 @@ function SurfaceForThinkspeak()
 % ThingSpeak Channel ID and Write API Key
 channelID = 2332155;
 readAPIKey = 'FIZT5F9N257PMZBG';
-writeAPIKey = 'PORNZDX2Q0SNDGG9'; 
+% writeAPIKey = 'PORNZDX2Q0SNDGG9'; 
 
 % Clear existing data from ThingSpeak channel
-emptyData = NaN(1, 3);
-thingSpeakWrite(channelID, emptyData, 'Fields', [4, 5, 6], 'WriteKey', writeAPIKey);
+% emptyData = NaN(1, 3);
+% thingSpeakWrite(channelID, emptyData, 'Fields', [4, 5, 6], 'WriteKey', writeAPIKey);
 
 % Create a figure for the 3D surface plot
 figure;
